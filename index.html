@@ -220,7 +220,7 @@
                     <button type="submit">Notify Me</button>
                 </div>
                 <div class="success-message" id="successMessage">
-                    ✓ Thanks! We'll notify you when we launch.
+                    Thanks! We'll notify you when we launch.
                 </div>
             </form>
         </div>
@@ -239,28 +239,35 @@
         const form = document.getElementById('emailForm');
         const emailInput = document.getElementById('emailInput');
         const successMessage = document.getElementById('successMessage');
-
+        
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const email = emailInput.value;
-
+            const email = emailInput.value.trim();
+            if (!email) return;
+        
             try {
-            await fetch("https://script.google.com/macros/s/AKfycbwCsZ9PZYbp5GXayWhcJKfFsxZI8-xkjZJiRPmKEyYqjvO3VYLoxMcIaV-vadtVxneDgw/exec", {
-                method: "POST",
-                body: JSON.stringify({ email }),
-                headers: { "Content-Type": "application/json" }
-            });
-
-            successMessage.style.display = "block";
-            emailInput.value = "";
-
-            setTimeout(() => {
-                successMessage.style.display = "none";
-            }, 5000);
+                const response = await fetch("https://script.google.com/macros/s/AKfycbzfakwvPqhW1Ui9QtxZ_Y7S1ukgU12RWv_dCT1tHMh4iHRYu7yEm2UB1V2cGKpWrs8gFQ/exec", {
+                    method: "POST",
+                    body: JSON.stringify({ email }),
+                    headers: { "Content-Type": "application/json" }
+                });
+        
+                const result = await response.json();
+        
+                if (result.status === "success") {
+                    successMessage.style.display = "block";
+                    emailInput.value = "";
+                    setTimeout(() => successMessage.style.display = "none", 5000);
+                } else {
+                    alert("Something went wrong: " + result.message);
+                }
+        
             } catch (err) {
-            alert("Something went wrong. Please try again.");
+                console.error(err);
+                alert("Something went wrong. Please try again.");
             }
         });
-    </script>
+        </script>
+        
 </body>
 </html>
