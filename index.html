@@ -209,11 +209,17 @@
 
         <div class="email-form">
             <h2 class="form-title">Be the first to know when we launch</h2>
-            <form id="emailForm">
+            <form 
+                id="emailForm"
+                method="POST" 
+                action="https://script.google.com/macros/s/AKfycbzfakwvPqhW1Ui9QtxZ_Y7S1ukgU12RWv_dCT1tHMh4iHRYu7yEm2UB1V2cGKpWrs8gFQ/exec"
+                target="hidden_iframe"
+            >
                 <div class="input-group">
                     <input 
                         type="email" 
-                        id="emailInput" 
+                        id="emailInput"
+                        name="email"
                         placeholder="Enter your email address" 
                         required
                     >
@@ -222,7 +228,11 @@
                 <div class="success-message" id="successMessage">
                     Thanks! We'll notify you when we launch.
                 </div>
+                <div class="fail-message" id="failMessage" style="display:none; color:red;">
+                    Please enter a valid email address.
+                </div>
             </form>
+            <iframe name="hidden_iframe" style="display:none;"></iframe>
         </div>
 
         <div class="social-links">
@@ -236,38 +246,35 @@
     </div>
 
     <script>
-        const form = document.getElementById('emailForm');
-        const emailInput = document.getElementById('emailInput');
-        const successMessage = document.getElementById('successMessage');
-        
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
+       const form = document.getElementById("emailForm");
+        const emailInput = document.getElementById("emailInput");
+        const successMessage = document.getElementById("successMessage");
+
+        function isValidEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        form.addEventListener("submit", (e) => {
             const email = emailInput.value.trim();
-            if (!email) return;
-        
-            try {
-                const response = await fetch("https://script.google.com/macros/s/AKfycbzfakwvPqhW1Ui9QtxZ_Y7S1ukgU12RWv_dCT1tHMh4iHRYu7yEm2UB1V2cGKpWrs8gFQ/exec", {
-                    method: "POST",
-                    body: JSON.stringify({ email }),
-                    headers: { "Content-Type": "application/json" }
-                });
-        
-                const result = await response.json();
-        
-                if (result.status === "success") {
-                    successMessage.style.display = "block";
-                    emailInput.value = "";
-                    setTimeout(() => successMessage.style.display = "none", 5000);
-                } else {
-                    alert("Something went wrong: " + result.message);
-                }
-        
-            } catch (err) {
-                console.error(err);
-                alert("Something went wrong. Please try again.");
+
+            // Validate email format
+            if (!isValidEmail(email)) {
+            e.preventDefault();
+            console.warn("Invalid email entered:", email); // console message for fail
+            alert("Please enter a valid email address.");  // optional alert for fail
+            failMessage.style.display = "block";          // show fail message
+            setTimeout(() => failMessage.style.display = "none", 5000);
+            return;
             }
+
+            // If valid, show success message
+            successMessage.style.display = "block";
+            failMessage.style.display = "none"; // hide fail message if previously shown
+            emailInput.value = "";               // clear input
+            setTimeout(() => successMessage.style.display = "none", 5000);
+            // No e.preventDefault() — form submits normally to Apps Script
         });
-        </script>
+    </script>
         
 </body>
 </html>
