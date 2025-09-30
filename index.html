@@ -212,7 +212,7 @@
             <form 
                 id="emailForm"
                 method="POST" 
-                action="https://script.google.com/macros/s/AKfycbzfakwvPqhW1Ui9QtxZ_Y7S1ukgU12RWv_dCT1tHMh4iHRYu7yEm2UB1V2cGKpWrs8gFQ/exec"
+                action="https://script.google.com/macros/s/AKfycbxqxzA2ajlfMZA7GPBGIjSLInm7wuc3kcfjFwQYuNzLvyUpI8HODhDH9BOSKHOfj5dCew/exec"
                 target="hidden_iframe"
             >
                 <div class="input-group">
@@ -249,6 +249,7 @@
        const form = document.getElementById("emailForm");
         const emailInput = document.getElementById("emailInput");
         const successMessage = document.getElementById("successMessage");
+        const failMessage = document.getElementById("failMessage");
 
         function isValidEmail(email) {
             return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -257,22 +258,21 @@
         form.addEventListener("submit", (e) => {
             const email = emailInput.value.trim();
 
-            // Validate email format
+            // Validate email format before submission
             if (!isValidEmail(email)) {
-            e.preventDefault();
-            console.warn("Invalid email entered:", email); // console message for fail
-            alert("Please enter a valid email address.");  // optional alert for fail
-            failMessage.style.display = "block";          // show fail message
+            e.preventDefault(); // prevent sending invalid email
+            console.warn("Invalid email:", email);
+            failMessage.style.display = "block";
             setTimeout(() => failMessage.style.display = "none", 5000);
             return;
             }
 
-            // If valid, show success message
+            // Show success message immediately
             successMessage.style.display = "block";
             failMessage.style.display = "none"; // hide fail message if previously shown
             emailInput.value = "";               // clear input
-            setTimeout(() => successMessage.style.display = "none", 5000);
-            // No e.preventDefault() — form submits normally to Apps Script
+
+            // Form will still submit normally to Apps Script
         });
     </script>
         
