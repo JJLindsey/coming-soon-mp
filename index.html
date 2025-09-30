@@ -209,21 +209,16 @@
 
         <div class="email-form">
             <h2 class="form-title">Be the first to know when we launch</h2>
-            <form 
-                id="emailForm"
-                method="POST" 
-                action="https://script.google.com/macros/s/AKfycbwkwE6cfnRih6-5OYtjbPP2MR8zcDdkQRc0ykDNPSRQKvNK4b9DTSkqAl7BElwy9KJBQg/exec"
-                target="hidden_iframe"
-            >
+            <form id="emailForm">
                 <div class="input-group">
-                    <input 
-                        type="email" 
-                        id="emailInput"
-                        name="email"
-                        placeholder="Enter your email address" 
-                        required
-                    >
-                    <button type="submit">Notify Me</button>
+                  <input 
+                    type="email" 
+                    id="emailInput"
+                    name="email"
+                    placeholder="Enter your email address" 
+                    required
+                  >
+                  <button type="submit">Notify Me</button>
                 </div>
                 <div class="success-message" id="successMessage">
                     Thanks! We'll notify you when we launch.
@@ -232,7 +227,7 @@
                     Please enter a valid email address.
                 </div>
             </form>
-            <iframe name="hidden_iframe" style="display:none;"></iframe>
+            
         </div>
 
         <div class="social-links">
@@ -246,33 +241,54 @@
     </div>
 
     <script>
-       const form = document.getElementById("emailForm");
+   
+        const form = document.getElementById("emailForm");
         const emailInput = document.getElementById("emailInput");
         const successMessage = document.getElementById("successMessage");
         const failMessage = document.getElementById("failMessage");
 
+        // Replace with your Apps Script Web App URL:
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwkwE6cfnRih6-5OYtjbPP2MR8zcDdkQRc0ykDNPSRQKvNK4b9DTSkqAl7BElwy9KJBQg/exec";
+
         function isValidEmail(email) {
-            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
         }
 
-        form.addEventListener("submit", (e) => {
-            const email = emailInput.value.trim();
+        form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const email = emailInput.value.trim();
 
-            // Validate email format before submission
-            if (!isValidEmail(email)) {
-            e.preventDefault(); // prevent sending invalid email
-            console.warn("Invalid email:", email);
+        if (!isValidEmail(email)) {
             failMessage.style.display = "block";
-            setTimeout(() => failMessage.style.display = "none", 5000);
+            successMessage.style.display = "none";
+            console.warn("Invalid email:", email);
             return;
-            }
+        }
 
-            // Show success message immediately
+        try {
+            const response = await fetch(SCRIPT_URL, {
+            method: "POST",
+            body: new URLSearchParams({ email })
+            });
+
+            const result = await response.json();
+            console.log("Server response:", result);
+
+            if (result.status === "success") {
             successMessage.style.display = "block";
-            failMessage.style.display = "none"; // hide fail message if previously shown
-            emailInput.value = "";               // clear input
-
-            // Form will still submit normally to Apps Script
+            failMessage.style.display = "none";
+            emailInput.value = "";
+            } else {
+            failMessage.textContent = "Something went wrong. Try again.";
+            failMessage.style.display = "block";
+            successMessage.style.display = "none";
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            failMessage.textContent = "Network error. Please try later.";
+            failMessage.style.display = "block";
+            successMessage.style.display = "none";
+        }
         });
     </script>
         
