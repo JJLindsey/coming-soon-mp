@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     <title>Mindful Pose - Coming Soon</title>
     <style>
         * {
@@ -220,10 +222,12 @@
                   >
                   <button type="submit">Notify Me</button>
                 </div>
-                <div class="success-message" id="successMessage">
+                <div class="success-message" id="successMessage" style="color:green;">
+                    <i class="bi bi-check-circle-fill" style="color: green; font-size: 1.5rem;"></i>
                     Thanks! We'll notify you when we launch.
                 </div>
-                <div class="fail-message" id="failMessage" style="display:none; color:red;">
+                <div class="fail-message" id="failMessage" style="color:red;">
+                    <i class="bi bi-exclamation-triangle-fill" style="color: red; font-size: 1.5rem;"></i>
                     Please enter a valid email address.
                 </div>
             </form>
